@@ -1,0 +1,313 @@
+---
+title: "Codebook_for_run_analysis.R"
+output: html_document
+---
+ Loading the library we will use
+```{Libraries}
+library (dplyr)
+library(data.table)
+```
+Setting the working directory
+```{Working directory}
+setwd("C:/Users/Fanzou Nath/Documents/Data Science - Coursera/R programming WD")
+````
+## Loading data in .R
+We load the .txt files we will use in this script into R.
+We start with the feature.txt and activity_labels.txt
+```{feature and activity label}
+featuresNames <- read.table('./UCI HAR Dataset/features.txt')
+activityNames <- read.table('./UCI HAR Dataset/activity_labels.txt', header = FALSE)
+````
+### Loading the Test set
+We continue with the files in the test directory, we load X_test, y_test and subject_test. 
+```{loading test set}
+features_test <- read.table('./UCI HAR Dataset/test/X_test.txt', header = FALSE)
+activity_test <- read.table('./UCI HAR Dataset/test/y_test.txt', header = FALSE)
+subject_test <- read.table('./UCI HAR Dataset/test/subject_test.txt', header = FALSE)
+````
+
+### Loading the Training Set
+Finally, we load the training set, these are the files in the train directory: X_train.txt, y_train.txt and subject_train.txt.
+```{loading train test}
+features_train <- read.table('./UCI HAR Dataset/train/X_train.txt', header = FALSE)
+activity_train <- read.table('./UCI HAR Dataset/train/y_train.txt', header = FALSE)
+subject_train <- read.table('./UCI HAR Dataset/train/subject_train.txt', header = FALSE)
+```
+After loading the data sets,we can now start with the first question of this project.
+
+## 1. Merge the training set and the test set  
+### 1.1 Combine corresponding test set and train set to create one data set of each elements; feaures, activity and subject.
+```{}
+features <- rbind(features_train, features_test)
+activity <- rbind(activity_train, activity_test)
+subject <- rbind(subject_train, subject_test)
+```
+
+### 1.2 Giving Names to the features data table using the names in featuresNames
+```{}
+colnames(features) <- featuresNames[, 2]
+```
+
+### 1.3 Merging the data to create one data set.
+```{}
+colnames(activity) <- "Activity"
+colnames(subject) <- "Subject"
+data <- cbind(features, activity, subject)
+```
+
+## 2. Extracts only the measurements on the mean and standard deviation for each measurement.
+###Selecting only columns which features names containing mean or std
+```{}
+meanstd <- grep("mean|std", names(data), ignore.case = TRUE)
+```
+Note that meanSTD do not contain the Activty and subject columns. We shoud then add the last two columns of data 562 and 563 to the final data set 
+We then selet the columns we want to keep in the next data table. We store the result in variable x. 
+We check the dimension of data before extracting the coulumn in the next step.
+````{}
+x <- c(meanstd, 562, 563)
+dim(data)
+````
+[1] 10299   563
+
+## We finally create the data set with mean, std, activity and subject and we check the dimensin of the new data set : DataMeanStd
+```{}
+dataMeanStd <- data[,x]
+dim(dataMeanStd)
+```
+[1] 10299    88
+
+## 3. Uses descriptive a,ctivity names to name the activities in the data set
+The activity in dataMeanSTD is of numeric type. We need to convert it to character and store the actvityNames in it.
+```{}
+dataMeanStd$Activity <- as.character(dataMeanStd$Activity)
+for (i in 1:6){
+  dataMeanStd$Activity[dataMeanStd$Activity == i] <- as.character(activityNames[i,2])
+}
+dataMeanStd$Activity <- as.factor(dataMeanStd$Activity)
+```
+## 4. Appropriately labels the data set with descriptive variable names.
+We first examine the names(dataMeanStd):
+```{}
+names(dataMeanStd)
+```
+[1] "tBodyAcc-mean()-X"                   
+ [2] "tBodyAcc-mean()-Y"                   
+ [3] "tBodyAcc-mean()-Z"                   
+ [4] "tBodyAcc-std()-X"                    
+ [5] "tBodyAcc-std()-Y"                    
+ [6] "tBodyAcc-std()-Z"                    
+ [7] "tGravityAcc-mean()-X"                
+ [8] "tGravityAcc-mean()-Y"                
+ [9] "tGravityAcc-mean()-Z"                
+[10] "tGravityAcc-std()-X"                 
+[11] "tGravityAcc-std()-Y"                 
+[12] "tGravityAcc-std()-Z"                 
+[13] "tBodyAccJerk-mean()-X"               
+[14] "tBodyAccJerk-mean()-Y"               
+[15] "tBodyAccJerk-mean()-Z"               
+[16] "tBodyAccJerk-std()-X"                
+[17] "tBodyAccJerk-std()-Y"                
+[18] "tBodyAccJerk-std()-Z"                
+[19] "tBodyGyro-mean()-X"                  
+[20] "tBodyGyro-mean()-Y"                  
+[21] "tBodyGyro-mean()-Z"                  
+[22] "tBodyGyro-std()-X"                   
+[23] "tBodyGyro-std()-Y"                   
+[24] "tBodyGyro-std()-Z"                   
+[25] "tBodyGyroJerk-mean()-X"              
+[26] "tBodyGyroJerk-mean()-Y"              
+[27] "tBodyGyroJerk-mean()-Z"              
+[28] "tBodyGyroJerk-std()-X"               
+[29] "tBodyGyroJerk-std()-Y"               
+[30] "tBodyGyroJerk-std()-Z"               
+[31] "tBodyAccMag-mean()"                  
+[32] "tBodyAccMag-std()"                   
+[33] "tGravityAccMag-mean()"               
+[34] "tGravityAccMag-std()"                
+[35] "tBodyAccJerkMag-mean()"              
+[36] "tBodyAccJerkMag-std()"               
+[37] "tBodyGyroMag-mean()"                 
+[38] "tBodyGyroMag-std()"                  
+[39] "tBodyGyroJerkMag-mean()"             
+[40] "tBodyGyroJerkMag-std()"              
+[41] "fBodyAcc-mean()-X"                   
+[42] "fBodyAcc-mean()-Y"                   
+[43] "fBodyAcc-mean()-Z"                   
+[44] "fBodyAcc-std()-X"                    
+[45] "fBodyAcc-std()-Y"                    
+[46] "fBodyAcc-std()-Z"                    
+[47] "fBodyAcc-meanFreq()-X"               
+[48] "fBodyAcc-meanFreq()-Y"               
+[49] "fBodyAcc-meanFreq()-Z"               
+[50] "fBodyAccJerk-mean()-X"               
+[51] "fBodyAccJerk-mean()-Y"               
+[52] "fBodyAccJerk-mean()-Z"               
+[53] "fBodyAccJerk-std()-X"                
+[54] "fBodyAccJerk-std()-Y"                
+[55] "fBodyAccJerk-std()-Z"                
+[56] "fBodyAccJerk-meanFreq()-X"           
+[57] "fBodyAccJerk-meanFreq()-Y"           
+[58] "fBodyAccJerk-meanFreq()-Z"           
+[59] "fBodyGyro-mean()-X"                  
+[60] "fBodyGyro-mean()-Y"                  
+[61] "fBodyGyro-mean()-Z"                  
+[62] "fBodyGyro-std()-X"                   
+[63] "fBodyGyro-std()-Y"                   
+[64] "fBodyGyro-std()-Z"                   
+[65] "fBodyGyro-meanFreq()-X"              
+[66] "fBodyGyro-meanFreq()-Y"              
+[67] "fBodyGyro-meanFreq()-Z"              
+[68] "fBodyAccMag-mean()"                  
+[69] "fBodyAccMag-std()"                   
+[70] "fBodyAccMag-meanFreq()"              
+[71] "fBodyBodyAccJerkMag-mean()"          
+[72] "fBodyBodyAccJerkMag-std()"           
+[73] "fBodyBodyAccJerkMag-meanFreq()"      
+[74] "fBodyBodyGyroMag-mean()"             
+[75] "fBodyBodyGyroMag-std()"              
+[76] "fBodyBodyGyroMag-meanFreq()"         
+[77] "fBodyBodyGyroJerkMag-mean()"         
+[78] "fBodyBodyGyroJerkMag-std()"          
+[79] "fBodyBodyGyroJerkMag-meanFreq()"     
+[80] "angle(tBodyAccMean,gravity)"         
+[81] "angle(tBodyAccJerkMean),gravityMean)"
+[82] "angle(tBodyGyroMean,gravityMean)"    
+[83] "angle(tBodyGyroJerkMean,gravityMean)"
+[84] "angle(X,gravityMean)"                
+[85] "angle(Y,gravityMean)"                
+[86] "angle(Z,gravityMean)"                
+[87] "Activity"                            
+[88] "Subject"       
+
+We can see that:
+* Acc can be renamed by Accelerometer
+* Gyro can be renamed by  Gyroscope
+* BodyBody can be renamed by Body
+* Mag can be renamed by Magnitude
+* can be renamed by Frequency
+* t can be renamed by Time
+* tBody can be renamed by TimeBody
+* freq() can be renamed by Frequency
+```{}
+names(dataMeanStd) <- gsub("Acc", "Accelerometer", names(dataMeanStd))
+names(dataMeanStd) <- gsub("Gyro", "Gyroscope", names(dataMeanStd))
+names(dataMeanStd) <- gsub("BodyBody", "Body", names(dataMeanStd))
+names(dataMeanStd) <- gsub("Mag", "Magnitude", names(dataMeanStd))
+names(dataMeanStd) <- gsub("^f", "Frequency", names(dataMeanStd))
+names(dataMeanStd) <- gsub("^t", "Time", names(dataMeanStd))
+names(dataMeanStd) <- gsub("tBody", "TimeBody", names(dataMeanStd))
+names(dataMeanStd) <- gsub("freq()", "Frequency", names(dataMeanStd), ignore.case = TRUE)
+```
+we may also arrange the case to read easily
+```{}
+names(dataMeanStd) <- gsub("-mean()", "Mean", names(dataMeanStd), ignore.case = TRUE)
+names(dataMeanStd) <- gsub("-std()", "STD", names(dataMeanStd), ignore.case = TRUE)
+names(dataMeanStd) <- gsub("angle", "Angle", names(dataMeanStd), ignore.case = TRUE)
+names(dataMeanStd) <- gsub("gravity", "Gravity", names(dataMeanStd), ignore.case = TRUE)
+```
+We can now check the new names in the dataMeanStd
+```{}
+names(dataMeanStd)
+```
+ [1] "TimeBodyAccelerometerMean-X"                          
+ [2] "TimeBodyAccelerometerMean-Y"                          
+ [3] "TimeBodyAccelerometerMean-Z"                          
+ [4] "TimeBodyAccelerometerSTD-X"                           
+ [5] "TimeBodyAccelerometerSTD-Y"                           
+ [6] "TimeBodyAccelerometerSTD-Z"                           
+ [7] "TimeGravityAccelerometerMean-X"                       
+ [8] "TimeGravityAccelerometerMean-Y"                       
+ [9] "TimeGravityAccelerometerMean-Z"                       
+[10] "TimeGravityAccelerometerSTD-X"                        
+[11] "TimeGravityAccelerometerSTD-Y"                        
+[12] "TimeGravityAccelerometerSTD-Z"                        
+[13] "TimeBodyAccelerometerJerkMean-X"                      
+[14] "TimeBodyAccelerometerJerkMean-Y"                      
+[15] "TimeBodyAccelerometerJerkMean-Z"                      
+[16] "TimeBodyAccelerometerJerkSTD-X"                       
+[17] "TimeBodyAccelerometerJerkSTD-Y"                       
+[18] "TimeBodyAccelerometerJerkSTD-Z"                       
+[19] "TimeBodyGyroscopeMean-X"                              
+[20] "TimeBodyGyroscopeMean-Y"                              
+[21] "TimeBodyGyroscopeMean-Z"                              
+[22] "TimeBodyGyroscopeSTD-X"                               
+[23] "TimeBodyGyroscopeSTD-Y"                               
+[24] "TimeBodyGyroscopeSTD-Z"                               
+[25] "TimeBodyGyroscopeJerkMean-X"                          
+[26] "TimeBodyGyroscopeJerkMean-Y"                          
+[27] "TimeBodyGyroscopeJerkMean-Z"                          
+[28] "TimeBodyGyroscopeJerkSTD-X"                           
+[29] "TimeBodyGyroscopeJerkSTD-Y"                           
+[30] "TimeBodyGyroscopeJerkSTD-Z"                           
+[31] "TimeBodyAccelerometerMagnitudeMean"                   
+[32] "TimeBodyAccelerometerMagnitudeSTD"                    
+[33] "TimeGravityAccelerometerMagnitudeMean"                
+[34] "TimeGravityAccelerometerMagnitudeSTD"                 
+[35] "TimeBodyAccelerometerJerkMagnitudeMean"               
+[36] "TimeBodyAccelerometerJerkMagnitudeSTD"                
+[37] "TimeBodyGyroscopeMagnitudeMean"                       
+[38] "TimeBodyGyroscopeMagnitudeSTD"                        
+[39] "TimeBodyGyroscopeJerkMagnitudeMean"                   
+[40] "TimeBodyGyroscopeJerkMagnitudeSTD"                    
+[41] "FrequencyBodyAccelerometerMean-X"                     
+[42] "FrequencyBodyAccelerometerMean-Y"                     
+[43] "FrequencyBodyAccelerometerMean-Z"                     
+[44] "FrequencyBodyAccelerometerSTD-X"                      
+[45] "FrequencyBodyAccelerometerSTD-Y"                      
+[46] "FrequencyBodyAccelerometerSTD-Z"                      
+[47] "FrequencyBodyAccelerometer-meanFrequency-X"           
+[48] "FrequencyBodyAccelerometer-meanFrequency-Y"           
+[49] "FrequencyBodyAccelerometer-meanFrequency-Z"           
+[50] "FrequencyBodyAccelerometerJerkMean-X"                 
+[51] "FrequencyBodyAccelerometerJerkMean-Y"                 
+[52] "FrequencyBodyAccelerometerJerkMean-Z"                 
+[53] "FrequencyBodyAccelerometerJerkSTD-X"                  
+[54] "FrequencyBodyAccelerometerJerkSTD-Y"                  
+[55] "FrequencyBodyAccelerometerJerkSTD-Z"                  
+[56] "FrequencyBodyAccelerometerJerk-meanFrequency-X"       
+[57] "FrequencyBodyAccelerometerJerk-meanFrequency-Y"       
+[58] "FrequencyBodyAccelerometerJerk-meanFrequency-Z"       
+[59] "FrequencyBodyGyroscopeMean-X"                         
+[60] "FrequencyBodyGyroscopeMean-Y"                         
+[61] "FrequencyBodyGyroscopeMean-Z"                         
+[62] "FrequencyBodyGyroscopeSTD-X"                          
+[63] "FrequencyBodyGyroscopeSTD-Y"                          
+[64] "FrequencyBodyGyroscopeSTD-Z"                          
+[65] "FrequencyBodyGyroscope-meanFrequency-X"               
+[66] "FrequencyBodyGyroscope-meanFrequency-Y"               
+[67] "FrequencyBodyGyroscope-meanFrequency-Z"               
+[68] "FrequencyBodyAccelerometerMagnitudeMean"              
+[69] "FrequencyBodyAccelerometerMagnitudeSTD"               
+[70] "FrequencyBodyAccelerometerMagnitude-meanFrequency"    
+[71] "FrequencyBodyAccelerometerJerkMagnitudeMean"          
+[72] "FrequencyBodyAccelerometerJerkMagnitudeSTD"           
+[73] "FrequencyBodyAccelerometerJerkMagnitude-meanFrequency"
+[74] "FrequencyBodyGyroscopeMagnitudeMean"                  
+[75] "FrequencyBodyGyroscopeMagnitudeSTD"                   
+[76] "FrequencyBodyGyroscopeMagnitude-meanFrequency"        
+[77] "FrequencyBodyGyroscopeJerkMagnitudeMean"              
+[78] "FrequencyBodyGyroscopeJerkMagnitudeSTD"               
+[79] "FrequencyBodyGyroscopeJerkMagnitude-meanFrequency"    
+[80] "Angle(TimeBodyAccelerometerMean,Gravity)"             
+[81] "Angle(TimeBodyAccelerometerJerkMean),GravityMean)"    
+[82] "Angle(TimeBodyGyroscopeMean,GravityMean)"             
+[83] "Angle(TimeBodyGyroscopeJerkMean,GravityMean)"         
+[84] "Angle(X,GravityMean)"                                 
+[85] "Angle(Y,GravityMean)"                                 
+[86] "Angle(Z,GravityMean)"                                 
+[87] "Activity"                                             
+[88] "Subject"                                                            
+
+## 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+We create the tidyData2 data table and order its column. We finally write the final result in a file TidyData.txt
+```{}
+dataMeanStd$Subject <- as.factor(dataMeanStd$Subject)
+tidyData2 <- aggregate(. ~Subject + Activity, dataMeanStd, mean)
+tidyData2 <- tidyData2[order(tidyData2$Subject, tidyData2$Activity), ]
+write.table(tidyData2, file = "TidyData.txt", row.names = FALSE)
+````
+We can also check the dimension of tidyData2
+```{}
+dim(tidyData2)
+```
+[1] 180  88

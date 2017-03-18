@@ -1,5 +1,5 @@
 ---
-title: "Codebook_for_run_analysis.R"
+title: "Codebook for run_analysis.R"
 output: tidyData.txt
 ---
  Loading the library we will use
@@ -313,4 +313,5 @@ dim(tidyData2)
 [1] 180  88
 
 ## Conclusion
-If we take a look at our final file TidyData.txt, we can see that this data set is tidy. Each row describe the observation made on a given subject when doing an activity. The set has beeing order by subject and actvity.
+If we take a look at our final file TidyData.txt, we can see that this data set is tidy. Each row describe the observation made on a given subject when doing an activity. The set has beeing order by subject and actvity. 
+  

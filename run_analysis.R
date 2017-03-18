@@ -10,7 +10,7 @@
 library (dplyr)
 library(data.table)
 
-setwd("C:/Users/Fanzou Nath/Documents/Data Science - Coursera/R programming WD")
+setwd("./Users/NathK/Documents/Data Science - Coursera/R programming WD")
 featuresNames <- read.table('./UCI HAR Dataset/features.txt')
 activityNames <- read.table('./UCI HAR Dataset/activity_labels.txt', header = FALSE)
 features_test <- read.table('./UCI HAR Dataset/test/X_test.txt', header = FALSE)

@@ -1,6 +1,6 @@
 ---
 title: "Codebook_for_run_analysis.R"
-output: html_document
+output: tidyData.txt
 ---
  Loading the library we will use
 ```{Libraries}
@@ -10,21 +10,21 @@ library(data.table)
 Setting the working directory
 ```{Working directory}
 setwd("./Users/NathK/Documents/Data Science - Coursera/R programming WD")
-````
+```
 ## Loading data in .R
 We load the .txt files we will use in this script into R.
 We start with the feature.txt and activity_labels.txt
 ```{feature and activity label}
 featuresNames <- read.table('./UCI HAR Dataset/features.txt')
 activityNames <- read.table('./UCI HAR Dataset/activity_labels.txt', header = FALSE)
-````
+```
 ### Loading the Test set
 We continue with the files in the test directory, we load X_test, y_test and subject_test. 
 ```{loading test set}
 features_test <- read.table('./UCI HAR Dataset/test/X_test.txt', header = FALSE)
 activity_test <- read.table('./UCI HAR Dataset/test/y_test.txt', header = FALSE)
 subject_test <- read.table('./UCI HAR Dataset/test/subject_test.txt', header = FALSE)
-````
+```
 
 ### Loading the Training Set
 Finally, we load the training set, these are the files in the train directory: X_train.txt, y_train.txt and subject_train.txt.
@@ -63,13 +63,13 @@ meanstd <- grep("mean|std", names(data), ignore.case = TRUE)
 Note that meanSTD do not contain the Activty and subject columns. We shoud then add the last two columns of data 562 and 563 to the final data set 
 We then selet the columns we want to keep in the next data table. We store the result in variable x. 
 We check the dimension of data before extracting the coulumn in the next step.
-````{}
+```{}
 x <- c(meanstd, 562, 563)
 dim(data)
-````
+```
 [1] 10299   563
 
-## We finally create the data set with mean, std, activity and subject and we check the dimensin of the new data set : DataMeanStd
+We finally create the data set with mean, std, activity and subject and we check the dimensin of the new data set : DataMeanStd
 ```{}
 dataMeanStd <- data[,x]
 dim(dataMeanStd)
@@ -90,7 +90,7 @@ We first examine the names(dataMeanStd):
 ```{}
 names(dataMeanStd)
 ```
-[1] "tBodyAcc-mean()-X"                   
+ [1] "tBodyAcc-mean()-X"                   
  [2] "tBodyAcc-mean()-Y"                   
  [3] "tBodyAcc-mean()-Z"                   
  [4] "tBodyAcc-std()-X"                    
@@ -247,7 +247,7 @@ names(dataMeanStd)
 [36] "TimeBodyAccelerometerJerkMagnitudeSTD"                
 [37] "TimeBodyGyroscopeMagnitudeMean"                       
 [38] "TimeBodyGyroscopeMagnitudeSTD"                        
-[39] "TimeBodyGyroscopeJerkMagnitudeMean"                   
+[39] "TimeBodyGyroscopeJerkMagnitudeMean"
 [40] "TimeBodyGyroscopeJerkMagnitudeSTD"                    
 [41] "FrequencyBodyAccelerometerMean-X"                     
 [42] "FrequencyBodyAccelerometerMean-Y"                     
@@ -312,5 +312,5 @@ dim(tidyData2)
 ```
 [1] 180  88
 
-##Conclusion
+## Conclusion
 If we take a look at our final file TidyData.txt, we can see that this data set is tidy. Each row describe the observation made on a given subject when doing an activity. The set has beeing order by subject and actvity.

@@ -9,7 +9,7 @@ library(data.table)
 ```
 Setting the working directory
 ```{Working directory}
-setwd("C:/Users/Fanzou Nath/Documents/Data Science - Coursera/R programming WD")
+setwd("./Users/NathK/Documents/Data Science - Coursera/R programming WD")
 ````
 ## Loading data in .R
 We load the .txt files we will use in this script into R.
@@ -56,7 +56,7 @@ data <- cbind(features, activity, subject)
 ```
 
 ## 2. Extracts only the measurements on the mean and standard deviation for each measurement.
-###Selecting only columns which features names containing mean or std
+Selecting only columns which features names containing mean or std
 ```{}
 meanstd <- grep("mean|std", names(data), ignore.case = TRUE)
 ```
@@ -76,7 +76,7 @@ dim(dataMeanStd)
 ```
 [1] 10299    88
 
-## 3. Uses descriptive a,ctivity names to name the activities in the data set
+## 3. Uses descriptive activity names to name the activities in the data set
 The activity in dataMeanSTD is of numeric type. We need to convert it to character and store the actvityNames in it.
 ```{}
 dataMeanStd$Activity <- as.character(dataMeanStd$Activity)
